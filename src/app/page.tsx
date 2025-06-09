@@ -97,16 +97,8 @@ export default function HomePage() {
             革新的なITソリューションで<br />
             あなたのビジネスを次のレベルへ
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 transition-all duration-300">
-              サービスを見る
-            </button>
-            <button className="px-8 py-4 border-2 border-cyan-400 text-cyan-400 font-semibold rounded-full hover:bg-cyan-400 hover:text-slate-900 transition-all duration-300">
-              お問い合わせ
-            </button>
-          </div>
-          
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+
+          <div className="absolute bottom-[-32] left-1/2 transform -translate-x-1/2 animate-bounce">
             <ChevronDown className="w-8 h-8 text-gray-400" />
           </div>
         </div>
