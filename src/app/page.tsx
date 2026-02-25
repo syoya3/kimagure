@@ -1,275 +1,207 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, BookOpen, Rocket, Users, ExternalLink, Menu, X, MessageCircle, Code } from 'lucide-react';
+import Image from 'next/image';
+import { Leaf, Sprout, Users, Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
+
+const services = [
+  {
+    icon: <Sprout className="w-6 h-6" />,
+    title: '学びの場づくり',
+    target: '対象：成長したい個人・チーム',
+    description:
+      '実践型ワークショップと伴走で、知識を「できる」へ変える学びを設計します。',
+    image: '/images/service-learn.svg',
+  },
+  {
+    icon: <Leaf className="w-6 h-6" />,
+    title: '挑戦の機会づくり',
+    target: '対象：はじめの一歩を踏み出したい人',
+    description:
+      '小さな挑戦を積み重ねるプロジェクト設計で、行動が続く仕組みをつくります。',
+    image: '/images/service-challenge.svg',
+  },
+  {
+    icon: <Users className="w-6 h-6" />,
+    title: '地域とつながる循環づくり',
+    target: '対象：地域・コミュニティ・組織',
+    description:
+      'デジタルとリアルを組み合わせ、人と地域が育ち合うコミュニティを育成します。',
+    image: '/images/service-community.svg',
+  },
+];
+
+const values = [
+  '自分らしい選択を尊重する',
+  '小さな挑戦を継続して育てる',
+  '価値を次世代へ循環させる',
+];
 
 export default function HomePage() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const services = [
-    {
-      icon: <BookOpen className="w-12 h-12" />,
-      title: "学びの場づくり",
-      who: "スキルを伸ばしたい方へ",
-      description: "実践型ワークショップやオンライン学習で、あなたの「気になる」を知識と行動に変えます。"
-    },
-    {
-      icon: <Rocket className="w-12 h-12" />,
-      title: "挑戦の機会づくり",
-      who: "一歩踏み出したい方へ",
-      description: "小さな挑戦を積み重ねられる環境と伴走サポートで、アイデアを形にするまでを支えます。"
-    },
-    {
-      icon: <Users className="w-12 h-12" />,
-      title: "つながりの循環設計",
-      who: "地域・コミュニティを育てたい方へ",
-      description: "デジタルとリアルを組み合わせ、人と地域が成長し合える仕組みを一緒につくります。"
-    },
-  ];
-
-  const philosophyItems = [
-    { term: '木', meaning: '人の成長' },
-    { term: '実', meaning: '成果と価値' },
-    { term: '気まぐれ', meaning: '自分らしい自由な選択' },
-    { term: '次世代', meaning: '価値の循環' },
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#2f2a25] via-[#3a332b] to-[#2f2a25]">
+    <div className="min-h-screen bg-[#f8f6ef] text-[#2F2A25]">
       {/* Header */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-900/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-300 to-lime-400 bg-clip-text text-transparent">
-                木まぐれ
-              </h1>
-            </div>
-            
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-8">
-              <a href="#home" className="text-white hover:text-amber-300 transition-colors">ホーム</a>
-              <a href="#services" className="text-white hover:text-amber-300 transition-colors">事業内容</a>
-              <a href="#contact" className="text-white hover:text-amber-300 transition-colors">お問い合わせ</a>
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <button 
-              className="md:hidden text-white"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
-          {/* Mobile Navigation */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden bg-slate-900/95 backdrop-blur-md rounded-lg mt-2 p-4">
-              <nav className="flex flex-col space-y-4">
-                <a href="#home" className="text-white hover:text-amber-300 transition-colors">ホーム</a>
-                <a href="#services" className="text-white hover:text-amber-300 transition-colors">事業内容</a>
-                <a href="#contact" className="text-white hover:text-amber-300 transition-colors">お問い合わせ</a>
-              </nav>
-            </div>
-          )}
+      <header className="sticky top-0 z-50 border-b border-[#ece6d5] bg-[#f8f6ef]/95 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <a href="#home" className="text-xl font-bold tracking-wide">
+            木まぐれ <span className="text-[#5FAF4B]">〜気になる木〜</span>
+          </a>
+          <nav className="hidden items-center gap-6 text-sm md:flex">
+            <a href="#concept" className="hover:text-[#5FAF4B] transition-colors">木まぐれとは</a>
+            <a href="#services" className="hover:text-[#5FAF4B] transition-colors">事業内容</a>
+            <a href="#about" className="hover:text-[#5FAF4B] transition-colors">理念</a>
+            <a href="#contact" className="hover:text-[#5FAF4B] transition-colors">お問い合わせ</a>
+          </nav>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section id="home" className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-amber-400/20 blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-lime-500/20 blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-        </div>
-        
-        <div className="relative text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-amber-300 via-yellow-300 to-lime-400 bg-clip-text text-transparent">
-              木まぐれ
-            </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
-            人が根を伸ばし、未来へ価値を実らせる。<br />
-            学び・挑戦・つながりの場をつくる会社です。
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-            <a
-              href="#services"
-              className="px-8 py-3 bg-gradient-to-r from-amber-400 to-lime-500 text-slate-900 font-bold rounded-full hover:opacity-90 transition"
-            >
-              事業を見る
-            </a>
-            <a
-              href="#contact"
-              className="px-8 py-3 border border-amber-300 text-amber-200 font-semibold rounded-full hover:bg-amber-300/10 transition"
-            >
-              無料で相談する
-            </a>
-          </div>
-
-          <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <ChevronDown className="w-8 h-8 text-gray-400" />
+      {/* Hero */}
+      <section id="home" className="relative overflow-hidden">
+        <Image
+          src="/images/hero-forest.svg"
+          alt="木々と太陽をモチーフにした木まぐれのキービジュアル"
+          fill
+          priority
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[#2F2A25]/45" />
+        <div className="relative mx-auto grid min-h-[74vh] max-w-6xl items-center px-4 py-20 sm:px-6 lg:px-8">
+          <div className="max-w-3xl text-white">
+            <p className="mb-4 inline-flex items-center rounded-full bg-[#F4C542]/90 px-4 py-1 text-sm font-semibold text-[#2F2A25]">
+              人の成長を、地域の実りへ
+            </p>
+            <h1 className="mb-6 text-4xl font-bold leading-tight md:text-6xl">
+              人が根を伸ばし、<br />
+              未来へ価値を実らせる。
+            </h1>
+            <p className="mb-8 text-lg leading-relaxed text-[#f8f4ea] md:text-xl">
+              木まぐれは、学び・挑戦・つながりを育てる会社です。<br />
+              一人ひとりの「気になる」を起点に、次世代へつながる価値の循環をつくります。
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="#services"
+                className="inline-flex items-center gap-2 rounded-full bg-[#F4C542] px-6 py-3 font-bold text-[#2F2A25] hover:brightness-95"
+              >
+                事業を見る <ArrowRight className="h-4 w-4" />
+              </a>
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/10 px-6 py-3 font-semibold text-white hover:bg-white/20"
+              >
+                お問い合わせ
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Philosophy Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-slate-900/40">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-amber-300 to-lime-400 bg-clip-text text-transparent">
-              木まぐれとは（30秒でわかる）
-            </h2>
-            <p className="text-gray-300">会社名に込めた想いを、4つの言葉で表現しています。</p>
-          </div>
+      {/* Concept */}
+      <section id="concept" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+        <h2 className="mb-3 text-3xl font-bold md:text-4xl">木まぐれとは</h2>
+        <p className="mb-8 text-[#5a544d]">会社名に込めた4つの意味で、私たちの姿勢を表現しています。</p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ['木', '人の成長'],
+            ['実', '成果と価値'],
+            ['気まぐれ', '自分らしい選択'],
+            ['次世代', '価値の循環'],
+          ].map(([k, v]) => (
+            <div key={k} className="rounded-2xl border border-[#ece6d5] bg-white p-5 text-center shadow-sm">
+              <p className="mb-1 text-2xl font-bold text-[#5FAF4B]">{k}</p>
+              <p className="text-sm text-[#5a544d]">{v}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {philosophyItems.map((item) => (
-              <div key={item.term} className="bg-slate-800/60 border border-slate-700 rounded-xl p-5 text-center">
-                <p className="text-amber-300 text-2xl font-bold mb-2">{item.term}</p>
-                <p className="text-gray-200">{item.meaning}</p>
-              </div>
+      {/* Services */}
+      <section id="services" className="bg-[#fffdf7] py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <h2 className="mb-3 text-3xl font-bold md:text-4xl">あなたの一歩を応援する3つの事業</h2>
+          <p className="mb-10 text-[#5a544d]">「誰に・何を・どう変わるか」が伝わるサービス設計で伴走します。</p>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {services.map((service) => (
+              <article key={service.title} className="overflow-hidden rounded-2xl border border-[#ece6d5] bg-white shadow-sm">
+                <div className="relative h-44 w-full">
+                  <Image src={service.image} alt={service.title} fill className="object-cover" />
+                </div>
+                <div className="p-5">
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#f3f9ef] px-3 py-1 text-sm text-[#3f7f35]">
+                    {service.icon}
+                    {service.target}
+                  </div>
+                  <h3 className="mb-2 text-xl font-bold">{service.title}</h3>
+                  <p className="text-[#5a544d]">{service.description}</p>
+                </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-300 to-lime-400 bg-clip-text text-transparent">
-              あなたの一歩を応援する3つの事業
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              「気になる」を行動に変え、成長の循環を生む場と仕組みを提供します
+      {/* About */}
+      <section id="about" className="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div>
+          <h2 className="mb-5 text-3xl font-bold md:text-4xl">理念・ビジョン・ミッション</h2>
+          <div className="space-y-4 text-[#5a544d]">
+            <p>
+              <span className="font-semibold text-[#2F2A25]">理念：</span>
+              人が根を伸ばし、自分らしく枝を広げ、未来へ価値を実らせる社会をつくる。
+            </p>
+            <p>
+              <span className="font-semibold text-[#2F2A25]">ビジョン：</span>
+              自分らしい選択が尊重され、周りの人が幸せに満ち、子どもたちに明るい未来が育まれる社会をつくる。
+            </p>
+            <p>
+              <span className="font-semibold text-[#2F2A25]">ミッション：</span>
+              人が集い、学び、挑戦できる場と仕組みを創り、価値の芽が育つ環境を育てる。
             </p>
           </div>
+        </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <div 
-                key={index} 
-                className="group bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 hover:bg-slate-700/50 hover:border-amber-400/50 transition-all duration-300 hover:shadow-xl hover:shadow-amber-400/10 hover:transform hover:scale-105"
-              >
-                <div className="text-amber-400 mb-4 group-hover:text-lime-400 transition-colors duration-300">
-                  {service.icon}
-                </div>
-                <p className="text-sm text-amber-300/80 font-medium mb-2">{service.who}</p>
-                <h3 className="text-xl font-bold text-white mb-4 group-hover:text-amber-300 transition-colors duration-300">
-                  {service.title}
-                </h3>
-                <p className="text-gray-300 leading-relaxed">
-                  {service.description}
-                </p>
-              </div>
+        <div className="rounded-3xl border border-[#ece6d5] bg-white p-6 shadow-sm">
+          <div className="relative mb-5 h-52 w-full overflow-hidden rounded-xl">
+            <Image
+              src="/images/about-cycle.svg"
+              alt="価値の循環を表すイメージ"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <h3 className="mb-3 text-xl font-bold">大切にする価値観</h3>
+          <ul className="space-y-2 text-[#5a544d]">
+            {values.map((v) => (
+              <li key={v} className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 text-[#5FAF4B]" />
+                <span>{v}</span>
+              </li>
             ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <a
-              href="#contact"
-              className="inline-block px-8 py-3 bg-gradient-to-r from-amber-400 to-lime-500 text-slate-900 font-bold rounded-full hover:opacity-90 transition"
-            >
-              まずは無料で相談する
-            </a>
-          </div>
+          </ul>
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-800/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-300 to-lime-400 bg-clip-text text-transparent">
-                木まぐれの想い
-              </h2>
-              <p className="text-xl text-gray-300 mb-6 leading-relaxed">
-                人が集い、学び、挑戦できる場と仕組みをつくり、価値の芽が育つ環境を育てます。個人の成長が、周囲や地域、次世代へと循環していくことを目指しています。
-              </p>
-              <p className="text-lg text-gray-400 mb-8 leading-relaxed">
-                自分らしい選択を尊重しながら、小さな挑戦を積み重ねる。木まぐれは、デジタルとコミュニティの力で、長く根づく価値づくりに伴走します。
-              </p>
-              <div className="flex items-center text-amber-300">
-                <ExternalLink className="w-5 h-5 mr-2" />
-                <span className="font-semibold">kimagure.tech</span>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="w-full h-96 bg-gradient-to-br from-amber-400/20 to-lime-500/20 rounded-2xl flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-32 h-32 bg-gradient-to-br from-amber-400 to-lime-500 rounded-full flex items-center justify-center mb-6 mx-auto">
-                    <Code className="w-16 h-16 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Innovation</h3>
-                  <p className="text-gray-300">革新的な技術で未来を創造</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Contact */}
+      <section id="contact" className="bg-[#2F2A25] py-16 text-white">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">お問い合わせ</h2>
+          <p className="mb-8 text-[#e9e1d2]">
+            会社に関するお問い合わせ・ご相談は、下記メールアドレスへご連絡ください。<br />
+            受信通知先：<span className="font-semibold text-[#F4C542]">info@kimagure.tech</span>
+          </p>
+          <a
+            href="mailto:info@kimagure.tech?subject=木まぐれへのお問い合わせ"
+            className="inline-flex items-center gap-2 rounded-full bg-[#F4C542] px-8 py-4 text-lg font-bold text-[#2F2A25] hover:brightness-95"
+          >
+            <Mail className="h-5 w-5" />
+            info@kimagure.tech に問い合わせる
+          </a>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-300 to-lime-400 bg-clip-text text-transparent">
-            まずは気軽に話してみませんか？
-          </h2>
-          <p className="text-xl text-gray-300 mb-12 leading-relaxed">
-            「こんなこと相談していいのかな？」で大丈夫です。<br />
-            あなたの「気になる」から、一緒に考えます。
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <a
-              href="mailto:contact@kimagure.tech"
-              className="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-400 to-lime-500 text-slate-900 font-bold rounded-full hover:opacity-90 transition text-lg"
-            >
-              <MessageCircle className="w-5 h-5" />
-              無料で相談する
-            </a>
-            <a
-              href="https://lin.ee/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-8 py-4 border-2 border-green-400 text-green-300 font-semibold rounded-full hover:bg-green-400/10 transition text-lg"
-            >
-              LINEで相談する
-            </a>
-          </div>
-
-          <p className="text-gray-500 text-sm">
-            ※ 相談は無料です。お気軽にご連絡ください。
-          </p>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-slate-700">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-300 to-lime-400 bg-clip-text text-transparent mb-4">
-            木まぐれ 〜気になる木〜
-          </h2>
-          <p className="text-gray-400 mb-4">
-            人が根を伸ばし、自分らしく枝を広げ、未来へ価値を実らせる。
-          </p>
-          <p className="text-gray-500 text-sm">
-            © 2025 木まぐれ (kimagure.tech). All rights reserved.
-          </p>
-        </div>
+      <footer className="border-t border-[#ece6d5] bg-[#f8f6ef] py-8 text-center text-sm text-[#6a635a]">
+        <p className="font-semibold text-[#2F2A25]">木まぐれ 〜気になる木〜</p>
+        <p className="mt-1">© 2026 木まぐれ (kimagure.tech) All rights reserved.</p>
       </footer>
     </div>
   );

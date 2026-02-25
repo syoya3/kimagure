@@ -1,0 +1,14 @@
+<svg width="800" height="500" viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="500" fill="#F7F2E3"/>
+  <circle cx="400" cy="250" r="150" stroke="#5FAF4B" stroke-width="18"/>
+  <path d="M548 190L590 184L574 222" stroke="#5FAF4B" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M252 310L210 316L226 278" stroke="#F4C542" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="400" cy="250" r="70" fill="#F4C542"/>
+  <path d="M364 262C380 234 420 234 436 262" stroke="#2F2A25" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="380" cy="230" r="8" fill="#2F2A25"/>
+  <circle cx="420" cy="230" r="8" fill="#2F2A25"/>
+  <rect x="95" y="70" width="160" height="56" rx="28" fill="#5FAF4B"/>
+  <text x="130" y="106" font-size="28" fill="white" font-family="Arial, sans-serif">成長</text>
+  <rect x="545" y="374" width="160" height="56" rx="28" fill="#F4C542"/>
+  <text x="580" y="410" font-size="28" fill="#2F2A25" font-family="Arial, sans-serif">循環</text>
+</svg>
