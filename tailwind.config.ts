@@ -8,6 +8,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-noto-sans-jp)", "Noto Sans JP", "sans-serif"],
+        oswald: ["var(--font-oswald)", "Oswald", "sans-serif"],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
