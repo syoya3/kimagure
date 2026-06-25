@@ -15,9 +15,9 @@ const oswald = Oswald({
 });
 
 export const metadata: Metadata = {
-  title: "木まぐれ | テクノロジーで未来を育てる",
+  title: "木まぐれ｜友達コレクション 〜気になる木の森〜",
   description:
-    "Web開発・AI導入・DX支援を通じて、企業と人の可能性を最大化する。確かな技術と情報設計で、成果につながるデジタル基盤を。",
+    "歩いて、話しかけて、株式会社木まぐれを知るゲーム体験。森のグローブを巡りながら、理念・ビジョン・ミッション・バリューに出会おう。",
 };
 
 export default function RootLayout({
