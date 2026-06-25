@@ -735,7 +735,7 @@ function Player() {
 
     let moving = false;
     if (isStarted && !dialogue) {
-      const ix = input.x;
+      const ix = -input.x;
       const iz = input.z;
       const mag = Math.min(Math.hypot(ix, iz), 1);
       if (mag > 0.05) {
