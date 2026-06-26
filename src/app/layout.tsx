@@ -15,9 +15,9 @@ const oswald = Oswald({
 });
 
 export const metadata: Metadata = {
-  title: "木まぐれ｜友達コレクション 〜気になる木の森〜",
+  title: "株式会社木まぐれ 〜気になる木〜",
   description:
-    "歩いて、話しかけて、株式会社木まぐれを知るゲーム体験。森のグローブを巡りながら、理念・ビジョン・ミッション・バリューに出会おう。",
+    "一人ひとりが自分らしく根を張り、学び、挑戦しながら価値を実らせる。木まぐれは、人と地域が成長し合い、次の世代へ明るい未来をつなぐ会社です。",
 };
 
 export default function RootLayout({
