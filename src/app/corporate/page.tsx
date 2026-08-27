@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import AiConsultation from "@/components/AiConsultation";
 
 const bizCards = [
   {
@@ -62,10 +63,10 @@ export default function Home() {
         </Link>
         <div className="flex items-center gap-6">
           <nav className="hidden md:flex gap-6">
-            {["事業内容", "私たちについて", "お知らせ"].map((label, i) => (
+            {["事業内容", "私たちについて", "AIに相談", "お知らせ"].map((label, i) => (
               <a
                 key={i}
-                href={["#business", "#about", "#info"][i]}
+                href={["#business", "#about", "#ai-consult", "#info"][i]}
                 className="font-oswald text-white text-xs font-medium tracking-widest no-underline"
               >
                 {label}
@@ -127,12 +128,20 @@ export default function Home() {
           <p className="text-[clamp(13px,1vw,15px)] text-white/45 max-w-[500px] leading-8 mb-10">
             Web開発・AI導入・DX支援を通じて、企業と人の可能性を最大化する。確かな技術と情報設計で、成果につながるデジタル基盤を。
           </p>
-          <a
-            href="#contact"
-            className="font-oswald inline-flex items-center gap-3 bg-[--accent] text-[#111] px-10 py-4 text-sm font-bold tracking-wide no-underline hover:bg-[--accent-dark] transition-all"
-          >
-            お問い合わせ <span className="text-lg">→</span>
-          </a>
+          <div className="flex flex-col sm:flex-row gap-3 items-start">
+            <a
+              href="#contact"
+              className="font-oswald inline-flex items-center gap-3 bg-[--accent] text-[#111] px-10 py-4 text-sm font-bold tracking-wide no-underline hover:bg-[--accent-dark] transition-all"
+            >
+              お問い合わせ <span className="text-lg">→</span>
+            </a>
+            <a
+              href="#ai-consult"
+              className="inline-flex items-center gap-3 border border-white/25 text-white px-8 py-4 text-sm font-bold tracking-wide no-underline hover:border-[--accent] hover:text-[--accent] transition-all"
+            >
+              ✦ AIに相談する
+            </a>
+          </div>
         </div>
         <a
           href="#"
@@ -292,6 +301,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <AiConsultation />
 
       {/* CONTACT */}
       <section className="py-[clamp(80px,10vw,160px)] px-[clamp(24px,5vw,80px)] bg-[--gray] relative overflow-hidden" id="contact">

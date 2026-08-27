@@ -52,3 +52,39 @@ body {
   background: var(--accent);
   animation: sDown 2.5s ease-in-out infinite;
 }
+
+@keyframes aiModalBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes aiModalPanelIn {
+  from { opacity: 0; transform: translateY(18px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ai-modal-backdrop {
+  animation: aiModalBackdropIn .2s ease-out both;
+}
+
+.ai-modal-panel {
+  animation: aiModalPanelIn .28s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+button:focus-visible,
+a:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
