@@ -8,6 +8,7 @@ type GameState = {
   soundOn: boolean;
   complete: boolean;
   showObjective: boolean;
+  overview: boolean;
   talked: string[];
   nearId: string | null;
   dialogue: Dialogue;
@@ -27,6 +28,7 @@ export const useGame = create<GameState>((set, get) => ({
   soundOn: false,
   complete: false,
   showObjective: true,
+  overview: false,
   talked: [],
   nearId: null,
   dialogue: null,

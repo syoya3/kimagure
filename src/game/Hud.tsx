@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useGame } from "./store";
 import { NPCS, TOTAL, CREED, CONTACT_EMAIL } from "./data";
-import { pressKey, releaseKey, setStick, clearStick } from "./input";
+import { pressKey, releaseKey, setStick, clearStick, clearInput } from "./input";
 import { startAudio, setSound } from "./audio";
 
 const ACCENT = "#ddc527";
@@ -28,6 +28,7 @@ export default function Hud() {
   const [typed, setTyped] = useState("");
   const typingDone = useRef(true);
   const fullText = useRef("");
+  const typingTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // --- セリフのタイプライター表示 ---
   useEffect(() => {
@@ -47,13 +48,15 @@ export default function Hud() {
         clearInterval(id);
       }
     }, 28);
-    return () => clearInterval(id);
+    typingTimer.current = id;
+    return () => { clearInterval(id); typingTimer.current = null; };
   }, [dialogue]);
 
   const advance = useCallback(() => {
     const d = useGame.getState().dialogue;
     if (!d) return;
     if (!typingDone.current) {
+      if (typingTimer.current) clearInterval(typingTimer.current);
       setTyped(fullText.current);
       typingDone.current = true;
       return;
@@ -75,16 +78,20 @@ export default function Hud() {
       const k = e.key.toLowerCase();
       if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
       pressKey(e.key);
-      if (k === "e" || k === " ") interact();
+      if (!e.repeat && (k === "e" || k === " ")) interact();
     };
     const up = (e: KeyboardEvent) => releaseKey(e.key);
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
+    window.addEventListener("blur", clearInput);
     return () => {
       window.removeEventListener("keydown", down);
       window.removeEventListener("keyup", up);
+      window.removeEventListener("blur", clearInput);
     };
   }, [interact]);
+
+  useEffect(() => { if (dialogue) clearInput(); }, [dialogue]);
 
   // --- サウンド同期 ---
   useEffect(() => {
@@ -110,7 +117,7 @@ export default function Hud() {
       <style>{cssText}</style>
 
       {/* 上部右：目標 & サウンド */}
-      {started && (
+      {started && !dialogue && (
         <div className="top-right">
           <button className="icobtn" onClick={() => useGame.getState().toggleObjective()} title="目標">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -133,7 +140,7 @@ export default function Hud() {
       )}
 
       {/* 会社概要リンク */}
-      {started && (
+      {started && !dialogue && (
         <button type="button" className="corp-link" onClick={goCorporate}>
           <span>会社概要を見る</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -144,7 +151,7 @@ export default function Hud() {
       )}
 
       {/* 目標カード */}
-      {started && showObjective && (
+      {started && !dialogue && showObjective && (
         <div className="objective">
           <div className="nextup">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 7.1-1.01z" /></svg>
@@ -181,37 +188,43 @@ export default function Hud() {
 
       {/* 会話 */}
       {dialogue && dialogueNpc && (
-        <div className="dialogue" onClick={advance}>
+        <div className="conversation-view">
+          <div className="conversation-caption"><span className="conversation-dot" />会話中<span>{dialogueNpc.role}</span></div>
+          <div className="dialogue" onClick={advance} role="region" aria-label={`${dialogueNpc.name}との会話`}>
           <div className="dwrap">
             <div className="speaker">{dialogueNpc.name}</div>
             <div className="dbox">
-              <div className="dtext">{typed}</div>
+              <div className="dtext" aria-live="off">{typed}</div>
             </div>
-            <div className="advance">
+            <button type="button" className="advance" aria-label="会話を進める" onClick={event => { event.stopPropagation(); advance(); }}>
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-            </div>
+            </button>
+            <div className="conversation-progress">{dialogue.line + 1} / {dialogueNpc.lines.length}<span>タップ / SPACE でつづける</span></div>
+          </div>
           </div>
         </div>
       )}
 
       {/* モバイルジョイスティック */}
-      {started && <Joystick />}
+      {started && !dialogue && <Joystick />}
 
       {/* スタート画面 */}
       {!started && (
-        <div className="overlay">
+        <div className="overlay campus-intro">
+          <div className="city-wordmark">KIMAGURE<span>INTERACTIVE CAMPUS / 01</span></div>
+          <div className="city-coordinate">KIMAGURE TECH DISTRICT<br />IDEAS GROW HERE.</div>
           <div className="panel">
-            <div className="badge">KIMAGURE ・ FRIEND COLLECTION</div>
-            <h1>木まぐれを、<br />あるいて知ろう。</h1>
-            <p>ようこそ、株式会社木まぐれのオフィスへ。<br /><b>社員たち</b>に話しかけて、会社の<b>想い</b>を集めてください。</p>
+            <div className="badge"><span className="live-dot" /> EXPLORE OUR TECH DISTRICT</div>
+            <h1>小さな出会いが、<br />未来をつくる。</h1>
+            <p>ここは、アイデアが育つ街。<br />木まぐれの<b>仲間たち</b>と出会い、<br />わたしたちの<b>未来への想い</b>を集めよう。</p>
             <div className="controls-row">
               <div className="ctl"><div className="keys"><span>W</span><span>A</span><span>S</span><span>D</span></div>移動</div>
               <div className="ctl"><div className="keys"><span className="singlekey">E</span></div>話す</div>
               <div className="ctl"><div className="keys"><span className="singlekey">␣</span></div>すすめる</div>
             </div>
-            <p className="hint">スマホは左下のスティックで移動、ふきだしをタップで会話。</p>
+            <p className="hint">ホイールで拡大・縮小、ドラッグで街を左右に移動。移動すると自動で追従。スマホは2本指でズーム。</p>
             <button className="bigbtn" onClick={handleStart}>
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>体験をはじめる
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>街を歩いてみる
             </button>
             <Link href="/corporate" className="text-link">会社概要を見る →</Link>
           </div>
@@ -343,21 +356,27 @@ const cssText = `
 .keycap{font-family:var(--font-oswald),sans-serif;font-weight:700;background:${ACCENT};color:#10151c;border-radius:7px;
   padding:2px 9px;font-size:.85rem}
 
+.conversation-view{position:fixed;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(7,21,28,.32),transparent 22%,transparent 63%,rgba(7,21,28,.5))}
+.conversation-caption{position:absolute;top:max(28px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:10px 18px;border:1px solid #ffffff45;border-radius:30px;background:#102b32bd;color:#fff;font-size:12px;letter-spacing:.12em;white-space:nowrap;backdrop-filter:blur(12px)}
+.conversation-caption>span:last-child{border-left:1px solid #ffffff45;padding-left:10px;color:#b9e9dc;font-size:10px}
+.conversation-dot{width:6px;height:6px;border-radius:50%;background:#85e3ca;box-shadow:0 0 12px #85e3ca}
+.conversation-progress{display:flex;justify-content:space-between;color:#e1ebe7;font-size:10px;letter-spacing:.08em;padding:9px 8px 0;text-shadow:0 1px 4px #000}
 .dialogue{position:fixed;left:0;right:0;bottom:0;padding:0 16px 20px;display:flex;justify-content:center;
   pointer-events:auto;animation:fadeUp .25s ease}
 .dwrap{width:min(720px,94vw);position:relative}
 .speaker{position:absolute;top:-15px;left:18px;background:${ACCENT};color:#10151c;
   font-weight:800;font-size:.82rem;padding:6px 16px;border-radius:10px;z-index:2;box-shadow:0 0 16px ${ACCENT}66}
 .dbox{background:rgba(10,15,22,.92);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.16);
-  border-radius:18px;padding:30px 26px 24px;min-height:104px;display:flex;align-items:center;
+  border-radius:18px;padding:30px 78px 24px 26px;min-height:104px;display:flex;align-items:center;
   box-shadow:0 12px 40px rgba(0,0,0,.5)}
 .dtext{font-weight:600;font-size:1.1rem;line-height:1.75;color:#f4f6f8}
-.advance{position:absolute;right:18px;bottom:16px;width:42px;height:42px;border-radius:50%;
+.advance{border:0;cursor:pointer;position:absolute;right:18px;bottom:44px;width:42px;height:42px;border-radius:50%;
   background:${ACCENT};display:grid;place-items:center;color:#10151c;animation:bob 1s ease-in-out infinite}
 .advance svg{width:18px;height:18px;margin-left:2px}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @keyframes fadeUp{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1}}
 .dialogue{animation:none}
+@media(max-width:699px){.dtext{font-size:.95rem;line-height:1.75}.dbox{padding-left:20px}.dialogue{padding-bottom:max(20px,env(safe-area-inset-bottom))}}
 
 .stick{position:fixed;left:24px;bottom:24px;width:128px;height:128px;border-radius:50%;
   background:rgba(247,243,230,.16);border:2px solid rgba(255,255,255,.3);touch-action:none;pointer-events:auto;display:none}
@@ -401,4 +420,35 @@ const cssText = `
 .b-primary{background:${ACCENT};color:#10151c;box-shadow:0 0 24px ${ACCENT}55}
 .b-link{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)!important}
 .b-ghost{background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.18)!important}
+.campus-intro{display:flex;align-items:center;justify-content:flex-start;padding:80px 6vw;background:linear-gradient(90deg,rgba(12,30,38,.92),rgba(12,30,38,.76) 27%,rgba(12,30,38,.1) 60%,transparent);overflow:auto}
+.campus-intro .panel{width:460px;max-width:100%;padding:30px 0;background:none;border:0;box-shadow:none;backdrop-filter:none;text-align:left}
+.city-wordmark{position:absolute;left:6vw;top:32px;font-family:var(--font-oswald),sans-serif;font-size:27px;font-weight:700;letter-spacing:.15em}
+.city-wordmark span{display:block;font-size:9px;letter-spacing:.22em;font-weight:400;color:#add0cf;margin-top:2px}
+.city-coordinate{position:absolute;right:28px;bottom:26px;text-align:right;font-size:10px;letter-spacing:.14em;color:#253f47;font-family:monospace}
+.campus-intro .badge{color:#91dfcc;font-size:10px;letter-spacing:.2em;display:flex;align-items:center;gap:9px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#91dfcc;box-shadow:0 0 12px #91dfcc}
+.campus-intro h1{font-size:clamp(32px,3.6vw,54px);letter-spacing:-.04em;line-height:1.5;font-weight:600;margin:22px 0}
+.campus-intro p{font-size:14px;line-height:2;color:#c0d0d3;font-weight:400}
+.campus-intro p b{color:#eaf1e8;font-weight:500}
+.campus-intro .controls-row{justify-content:flex-start;gap:22px;margin-top:25px}
+.campus-intro .ctl{font-size:10px;color:#9ab1b9;font-weight:400;flex-direction:row}
+.campus-intro .keys span{min-width:24px;height:24px;border-radius:4px;font-size:10px;background:rgba(255,255,255,.04)}
+.campus-intro .hint{font-size:10px;margin-top:13px;color:#91a9b1}
+.campus-intro .bigbtn{margin-top:20px;background:#c6e8ba;border-radius:6px;box-shadow:none;padding:15px 27px;font-size:14px;font-weight:700;letter-spacing:.08em;color:#203a3d}
+.campus-intro .text-link{font-size:11px;margin-top:20px;color:#b5c9cd}
+.citizen-label{font-family:var(--font-noto-sans-jp),sans-serif;border:1px solid rgba(199,228,222,.55);background:rgba(24,48,58,.88);padding:5px 9px;border-radius:5px;text-align:left;white-space:nowrap;color:#edf6ed;cursor:default;box-shadow:0 3px 12px #10252d20;line-height:1.5}
+.citizen-label span{display:block;font-size:7px;letter-spacing:.13em;color:#a6dbc9}
+.citizen-label strong{display:block;font-size:10px;font-weight:500}
+.citizen-label.is-near{border-color:#9be6cc;background:#203e49;cursor:pointer;box-shadow:0 0 0 3px #80d6bb22}
+.citizen-label.is-collected{opacity:.65}
+.guest-label{background:#efd88f;color:#2b3c3e;border-radius:4px;font:700 8px monospace;letter-spacing:.15em;padding:3px 6px}
+.building-sign{color:#edf7ee;background:#1b343ee8;padding:9px 16px;border-left:3px solid #82cfba;font:600 22px var(--font-oswald),sans-serif;letter-spacing:.16em;white-space:nowrap;pointer-events:none}
+.building-sign span{display:block;font-size:5px;letter-spacing:.3em;margin-top:2px;color:#a0d6c8}
+@media(max-width:700px){
+.stick{display:block;width:106px;height:106px;left:20px;bottom:24px}.city-wordmark{text-shadow:0 2px 12px #18323866}
+.campus-intro{align-items:flex-end;padding:90px 24px 24px;background:linear-gradient(0deg,rgba(13,31,40,.98),rgba(13,31,40,.85) 48%,rgba(13,31,40,.05) 90%)}
+.campus-intro .panel{padding:0}.city-wordmark{left:24px;top:23px;font-size:21px}.city-coordinate{display:none}
+.campus-intro h1{font-size:34px;margin:14px 0}.campus-intro p{font-size:12px}.campus-intro .controls-row{margin-top:16px}.campus-intro .bigbtn{margin-top:12px}
+.citizen-label strong{font-size:8px}.citizen-label{padding:3px 5px}.corp-link{min-height:42px;padding:0 14px;font-size:12px;bottom:20px;right:14px}
+}
 `;

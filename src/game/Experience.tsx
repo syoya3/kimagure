@@ -18,8 +18,8 @@ export default function Experience() {
       {ready && (
         <Canvas
           shadows
-          dpr={[1, 2]}
-          camera={{ position: [0, 5.6, 24], fov: 52, near: 0.1, far: 200 }}
+          dpr={[1, 1.5]}
+          camera={{ position: [49, 56, 66], fov: 40, near: 0.1, far: 450 }}
           gl={{ antialias: true, powerPreference: "high-performance" }}
         >
           <Scene />

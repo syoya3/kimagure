@@ -55,3 +55,8 @@ export function setStick(x: number, z: number) {
 export function clearStick() {
   recompute(); // キーボード状態に戻す
 }
+
+export function clearInput() {
+  keys.clear();
+  input.x = 0; input.z = 0;
+}
