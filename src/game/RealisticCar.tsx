@@ -1,8 +1,9 @@
 "use client";
-import { useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { RoundedBox, Environment, Lightformer } from "@react-three/drei";
 import * as THREE from "three";
+import { useMobileQuality } from "./RenderQuality";
 
 function Panel({ points, color = "#16323c", glass = false }: { points: [number, number, number][]; color?: string; glass?: boolean }) {
   const geometry = useMemo(() => {
@@ -14,15 +15,16 @@ function Panel({ points, color = "#16323c", glass = false }: { points: [number, 
 }
 
 function Wheel({ x, z, speed }: { x: number; z: number; speed: number }) {
+  const mobile = useMobileQuality();
   const ref = useRef<THREE.Group>(null);
   useFrame((_, dt) => { if (ref.current) ref.current.rotation.z -= speed * Math.min(dt, .05) / .36; });
   return <group position={[x, .41, z]}>
     <group ref={ref}>
       <mesh rotation-x={Math.PI / 2} castShadow><cylinderGeometry args={[.36, .36, .24, 32]} /><meshStandardMaterial color="#171b20" roughness={.94} /></mesh>
-      {[-1, 1].map(s => <group key={s} position-z={s * .126}>
+      {(mobile ? [Math.sign(z)] : [-1, 1]).map(s => <group key={s} position-z={s * .126}>
         <mesh><torusGeometry args={[.267, .025, 8, 32]} /><meshStandardMaterial color="#899499" metalness={.88} roughness={.24} /></mesh>
         <mesh rotation-x={Math.PI / 2}><cylinderGeometry args={[.23, .23, .012, 24]} /><meshStandardMaterial color="#303b41" metalness={.75} roughness={.35} /></mesh>
-        {Array.from({ length: 5 }, (_, i) => <group key={i} rotation-z={i * Math.PI * 2 / 5}>
+        {!mobile && Array.from({ length: 5 }, (_, i) => <group key={i} rotation-z={i * Math.PI * 2 / 5}>
           <mesh position-y={.13} rotation-z={.16}><boxGeometry args={[.053, .26, .024]} /><meshStandardMaterial color="#c5cdd0" metalness={.85} roughness={.2} /></mesh>
         </group>)}
         <mesh><sphereGeometry args={[.077, 12, 8]} /><meshStandardMaterial color="#75878f" metalness={.85} roughness={.25} /></mesh>
@@ -32,6 +34,11 @@ function Wheel({ x, z, speed }: { x: number; z: number; speed: number }) {
 }
 
 export function RealisticCar({ color, variant = 0, speed = 3 }: { color: string; variant?: number; speed?: number }) {
+  const mobile = useMobileQuality();
+  const group = useRef<THREE.Group>(null);
+  useLayoutEffect(() => {
+    if (mobile) group.current?.traverse(object => { if (object instanceof THREE.Mesh) object.castShadow = false; });
+  }, [mobile]);
   const suv = variant % 2 === 1;
   const roof = suv ? 1.68 : 1.43;
   const bodyGeometry = useMemo(() => {
@@ -46,7 +53,10 @@ export function RealisticCar({ color, variant = 0, speed = 3 }: { color: string;
     g.translate(0, 0, -.81); g.computeVertexNormals(); return g;
   }, []);
   const rear = suv ? -1.58 : -1.4, rearRoof = suv ? -1.2 : -.8;
-  return <group>
+  return <group ref={group}>
+    {mobile && <mesh position-y={0.09} rotation-x={-Math.PI / 2} scale={[2.3, 1, 1]}>
+      <circleGeometry args={[1, 24]} /><meshBasicMaterial color="#243b3d" transparent opacity={0.15} depthWrite={false} />
+    </mesh>}
     <mesh geometry={bodyGeometry} castShadow receiveShadow><meshPhysicalMaterial color={color} metalness={.42} roughness={.26} clearcoat={1} clearcoatRoughness={.15} /></mesh>
     <RoundedBox args={[3.96, .13, 1.58]} radius={.04} position={[0, .35, 0]}><meshStandardMaterial color="#242b31" roughness={.65} /></RoundedBox>
     {/* Windshield, rear glass and individually framed side windows. */}

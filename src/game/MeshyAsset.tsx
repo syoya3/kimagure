@@ -2,8 +2,10 @@
 
 import { Component, Suspense, useEffect, useMemo, type ReactNode } from "react";
 import { useGLTF } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { smoothCharacterGeometry, naturalCharacterMaterial } from "./characterSurface";
+import { useMobileQuality } from "./RenderQuality";
 
 type Props = { url: string; height: number; maxWidth?: number; maxDepth?: number; natural?: boolean; fallback: ReactNode };
 
@@ -14,7 +16,9 @@ export class AssetBoundary extends Component<{ children: ReactNode; fallback: Re
 }
 
 function Model({ url, height, maxWidth = Infinity, maxDepth = Infinity, natural = false }: Omit<Props, "fallback">) {
-  const { scene } = useGLTF(url);
+  const mobile = useMobileQuality();
+  const gl = useThree(s => s.gl);
+  const { scene } = useGLTF(mobile ? url.replace("/tech-campus/", "/tech-campus/mobile/") : url);
   const model = useMemo(() => {
     const copy = scene.clone(true);
     copy.updateMatrixWorld(true);
@@ -37,6 +41,7 @@ function Model({ url, height, maxWidth = Infinity, maxDepth = Infinity, natural 
     });
     return root;
   }, [scene, height, maxWidth, maxDepth, natural]);
+  useEffect(() => { gl.shadowMap.needsUpdate = true; }, [gl, model]);
   useEffect(() => () => {
     if (natural) model.traverse(child => {
       if (child instanceof THREE.Mesh) {

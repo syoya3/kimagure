@@ -1,0 +1,68 @@
+[
+  {
+    "mobile": true,
+    "fps": 29.6,
+    "dpr": 1.25,
+    "seconds": 3,
+    "totalFrames": 89,
+    "calls": 581,
+    "triangles": 207138,
+    "geometries": 897,
+    "textures": 98
+  },
+  {
+    "mobile": true,
+    "fps": 30,
+    "dpr": 1.25,
+    "seconds": 39.1,
+    "totalFrames": 1171,
+    "calls": 180,
+    "triangles": 160399,
+    "geometries": 1112,
+    "textures": 98
+  },
+  {
+    "mobile": true,
+    "fps": 30,
+    "dpr": 1.25,
+    "seconds": 78.2,
+    "totalFrames": 2343,
+    "calls": 259,
+    "triangles": 55581,
+    "geometries": 1112,
+    "textures": 98
+  },
+  {
+    "mobile": true,
+    "fps": 30,
+    "dpr": 1.25,
+    "seconds": 99.2,
+    "totalFrames": 2975,
+    "calls": 260,
+    "triangles": 55629,
+    "geometries": 1112,
+    "textures": 98
+  },
+  {
+    "mobile": true,
+    "fps": 30.1,
+    "dpr": 1.25,
+    "seconds": 153.4,
+    "totalFrames": 4599,
+    "calls": 220,
+    "triangles": 150855,
+    "geometries": 1112,
+    "textures": 98
+  },
+  {
+    "mobile": true,
+    "fps": 30.1,
+    "dpr": 1.25,
+    "seconds": 195.5,
+    "totalFrames": 5862,
+    "calls": 230,
+    "triangles": 154105,
+    "geometries": 1118,
+    "textures": 98
+  }
+]

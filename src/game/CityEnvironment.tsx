@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { MeshyAsset } from "./MeshyAsset";
 import { DetailedTree, StreetFurniture } from "./CityDetails";
 import { GoalTree } from "./GoalTree";
+import { useMobileQuality } from "./RenderQuality";
 import { UrbanBuilding } from "./UrbanBuildings";
 import { RealisticCar, CityReflections } from "./RealisticCar";
 
@@ -107,10 +108,11 @@ function Plaza() {
 }
 
 export default function CityEnvironment() {
+  const mobile = useMobileQuality();
   return <group>
     <CityReflections />
     <hemisphereLight args={["#f1f5ff", "#b0b5a8", 1.9]} />
-    <directionalLight position={[-35, 60, 25]} intensity={2.2} color="#fff2d9" castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-65} shadow-camera-right={65} shadow-camera-top={65} shadow-camera-bottom={-65} shadow-camera-far={180} shadow-normalBias={0.06} />
+    <directionalLight position={[-35, 60, 25]} intensity={2.2} color="#fff2d9" castShadow shadow-mapSize={mobile ? [1024, 1024] : [2048, 2048]} shadow-camera-left={-65} shadow-camera-right={65} shadow-camera-top={65} shadow-camera-bottom={-65} shadow-camera-far={180} shadow-normalBias={0.06} />
     <Block position={[0, -0.3, -8]} size={[180, 0.4, 160]} color="#8da882" />
     <Road x={0} z={25} length={150} />
     <Road x={-35} z={-8} length={110} vertical />

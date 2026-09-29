@@ -1,30 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import Scene from "./Scene";
+import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import Hud from "./Hud";
 
-export default function Experience() {
-  const [ready, setReady] = useState(false);
+// Only WebGL needs the browser. Keep the company introduction and links in SSR HTML.
+const CampusCanvas = dynamic(() => import("./CampusCanvas"), { ssr: false });
 
+export default function Experience() {
   useEffect(() => {
     if ("ontouchstart" in window) document.body.classList.add("touch");
-    setReady(true);
+    return () => document.body.classList.remove("touch");
   }, []);
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "#0a0f16", overflow: "hidden" }}>
-      {ready && (
-        <Canvas
-          shadows
-          dpr={[1, 1.5]}
-          camera={{ position: [49, 56, 66], fov: 40, near: 0.1, far: 450 }}
-          gl={{ antialias: true, powerPreference: "high-performance" }}
-        >
-          <Scene />
-        </Canvas>
-      )}
+      <CampusCanvas />
       <Hud />
     </div>
   );

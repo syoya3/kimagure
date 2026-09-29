@@ -12,6 +12,7 @@ import { input } from "./input";
 import CityEnvironment, { CITY_BUILDINGS } from "./CityEnvironment";
 import { MeshyAsset } from "./MeshyAsset";
 import { AnimatedCitizen, type Locomotion } from "./AnimatedCitizen";
+import { useMobileQuality } from "./RenderQuality";
 
 const CYAN = "#77e0d0";
 const CAMERA_YAW = Math.PI / 6;
@@ -32,6 +33,8 @@ function CitizenFallback({ color = "#263f52" }: { color?: string }) {
 const CITIZEN_HEIGHTS: Record<string, number> = { nagi: 2.3, miki: 2.45, sora: 2.2, tsudoi: 2.5, taiju: 2.6 };
 // Horizontal centres of the upper head band in each normalized Meshy asset.
 const HEAD_OFFSETS: Record<string, [number, number]> = { nagi: [.008, .005], miki: [-.008, .049], sora: [-.008, -.055], tsudoi: [-.073, .09], taiju: [-.045, .058] };
+const COLLISION_CIRCLES = [{ x: 0, z: -14, r: 3.65 }, ...NPCS.map(n => ({ x: n.pos[0], z: n.pos[1], r: 1.15 })),
+  ...[-1, 1].flatMap(s => [2, 6].map(z => ({ x: s < 0 ? -15.7 : 16.7, z, r: 1.45 })))];
 function Citizen({ npc }: { npc: Npc }) {
   return <MeshyAsset url={`/models/tech-campus/${npc.id}.glb`} height={CITIZEN_HEIGHTS[npc.id]} natural fallback={<CitizenFallback color={npc.top} />} />;
 }
@@ -69,9 +72,7 @@ function resolvePosition(x: number, z: number) {
       else nz = b.z + (dz < 0 ? -hd : hd);
     }
   }
-  const circles = [{ x: 0, z: -14, r: 3.65 }, ...NPCS.map(n => ({ x: n.pos[0], z: n.pos[1], r: 1.15 })),
-    ...[-1, 1].flatMap(s => [2, 6].map(z => ({ x: s < 0 ? -15.7 : 16.7, z, r: 1.45 })))];
-  for (const c of circles) {
+  for (const c of COLLISION_CIRCLES) {
     const dx = nx - c.x, dz = nz - c.z, d = Math.hypot(dx, dz);
     if (d < c.r) { nx = c.x + (d > 0.001 ? dx / d : 1) * c.r; nz = c.z + (d > 0.001 ? dz / d : 0) * c.r; }
   }
@@ -87,6 +88,7 @@ function resolvePosition(x: number, z: number) {
 }
 
 function Player() {
+  const mobile = useMobileQuality();
   const group = useRef<THREE.Group>(null);
   const body = useRef<THREE.Group>(null);
   const facing = useRef(Math.PI);
@@ -174,6 +176,9 @@ function Player() {
   });
   return <group ref={group} position={[0, 0.12, 14]} visible={!dialogue}>
     <group ref={body}><AnimatedCitizen motion={motion} /></group>
+    {mobile && <mesh rotation-x={-Math.PI / 2} position-y={0.02} scale={[0.8, 1, 1]}>
+      <circleGeometry args={[0.48, 24]} /><meshBasicMaterial color="#243b3d" transparent opacity={0.18} depthWrite={false} />
+    </mesh>}
     <mesh rotation-x={-Math.PI / 2} position-y={0.03}><ringGeometry args={[0.57, 0.72, 32]} /><meshBasicMaterial color="#f1d67d" /></mesh>
     {started && !dialogue && !overview && <Html position={[0, 3.15, 0]} center zIndexRange={[9, 0]}><div className="guest-label">YOU</div></Html>}
   </group>;

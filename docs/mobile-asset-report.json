@@ -1,0 +1,51 @@
+[
+  {
+    "name": "office",
+    "bytesBefore": 70997384,
+    "bytesAfter": 4198688,
+    "trianglesBefore": 2068896,
+    "trianglesAfter": 99974
+  },
+  {
+    "name": "nagi",
+    "bytesBefore": 8201836,
+    "bytesAfter": 764028,
+    "trianglesBefore": 10370,
+    "trianglesAfter": 10370
+  },
+  {
+    "name": "miki",
+    "bytesBefore": 18326404,
+    "bytesAfter": 2479160,
+    "trianglesBefore": 10301,
+    "trianglesAfter": 10301
+  },
+  {
+    "name": "sora",
+    "bytesBefore": 9306200,
+    "bytesAfter": 907468,
+    "trianglesBefore": 10364,
+    "trianglesAfter": 10364
+  },
+  {
+    "name": "tsudoi",
+    "bytesBefore": 8182896,
+    "bytesAfter": 792912,
+    "trianglesBefore": 10376,
+    "trianglesAfter": 10376
+  },
+  {
+    "name": "taiju",
+    "bytesBefore": 6716424,
+    "bytesAfter": 701640,
+    "trianglesBefore": 10342,
+    "trianglesAfter": 10342
+  },
+  {
+    "name": "guest-rerig-run-retargeted",
+    "bytesBefore": 7628644,
+    "bytesAfter": 3280700,
+    "trianglesBefore": 12471,
+    "trianglesAfter": 12471
+  }
+]

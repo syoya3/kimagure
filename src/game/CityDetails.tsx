@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { useMobileQuality } from "./RenderQuality";
 
 export type BoxPart = { p: [number, number, number]; s: [number, number, number]; r?: [number, number, number] };
 export function Boxes({ parts, color, metal = 0, map }: { parts: BoxPart[]; color: string; metal?: number; map?: THREE.Texture }) {
@@ -55,6 +56,8 @@ function leafTexture(golden: boolean) {
 }
 
 export function DetailedTree({ x, z, size = 1, variant = 0, golden = false }: { x: number; z: number; size?: number; variant?: number; golden?: boolean }) {
+  const mobile = useMobileQuality();
+  const leafCount = mobile ? (golden ? 360 : 220) : 520;
   const leaves = useRef<THREE.InstancedMesh>(null);
   const map = useMemo(() => leafTexture(golden), [golden]);
   const bark = useMemo(() => grainTexture(true), []);
@@ -70,7 +73,7 @@ export function DetailedTree({ x, z, size = 1, variant = 0, golden = false }: { 
   }, [variant]);
   useLayoutEffect(() => {
     const rng = random(715 + variant * 31), dummy = new THREE.Object3D(), color = new THREE.Color();
-    for (let i = 0; i < 520; i++) {
+    for (let i = 0; i < leafCount; i++) {
       const a = rng() * Math.PI * 2, y = rng() * 2 - 1, r = Math.cbrt(rng());
       const width = Math.sqrt(1 - y * y) * r;
       dummy.position.set(Math.cos(a) * width * 1.65, 3.4 + y * r * (variant % 2 ? 1.85 : 1.3), Math.sin(a) * width * 1.45);
@@ -83,12 +86,12 @@ export function DetailedTree({ x, z, size = 1, variant = 0, golden = false }: { 
     leaves.current!.instanceMatrix.needsUpdate = true;
     leaves.current!.instanceColor!.needsUpdate = true;
     leaves.current!.computeBoundingSphere();
-  }, [variant, golden]);
+  }, [variant, golden, leafCount]);
   useEffect(() => () => { map.dispose(); bark.dispose(); }, [map, bark]);
   return <group position={[x, 0, z]} scale={size}>
     <mesh position-y={1.65} castShadow><cylinderGeometry args={[0.11, 0.24, 3.3, 9, 5]} /><meshStandardMaterial color={golden ? "#b58b42" : "#8c795f"} map={bark} roughness={golden ? 0.65 : 1} /></mesh>
     {branchGeometry.map((b, i) => <mesh key={i} position={b.position} quaternion={b.rotation} castShadow><cylinderGeometry args={[0.025, 0.09, b.length, 6]} /><meshStandardMaterial color={golden ? "#957036" : "#71563e"} roughness={1} /></mesh>)}
-    <instancedMesh ref={leaves} args={[undefined, undefined, 520]} castShadow receiveShadow>
+    <instancedMesh ref={leaves} args={[undefined, undefined, leafCount]} castShadow receiveShadow>
       <planeGeometry /><meshStandardMaterial map={map} alphaTest={0.45} side={THREE.DoubleSide} roughness={golden ? 0.38 : 1} metalness={golden ? 0.3 : 0} emissive={golden ? "#e9a727" : "#000000"} emissiveIntensity={golden ? 0.28 : 0} />
       <meshDepthMaterial attach="customDepthMaterial" map={map} alphaTest={0.45} side={THREE.DoubleSide} depthPacking={THREE.RGBADepthPacking} />
     </instancedMesh>

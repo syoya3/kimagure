@@ -9,12 +9,14 @@ import { AssetBoundary, MeshyAsset } from "./MeshyAsset";
 import { locomotionClips } from "./locomotionClips";
 import { relaxHands } from "./characterRun";
 import { smoothCharacterGeometry, naturalCharacterMaterial } from "./characterSurface";
+import { useMobileQuality } from "./RenderQuality";
 
 export type Locomotion = { speed: number };
 const HEIGHT = 2.45;
 
 function RiggedCitizen({ motion }: { motion: RefObject<Locomotion> }) {
-  const { scene: source, animations } = useGLTF("/models/tech-campus/guest-rerig-run-retargeted.glb");
+  const mobile = useMobileQuality();
+  const { scene: source, animations } = useGLTF(`/models/tech-campus/${mobile ? "mobile/" : ""}guest-rerig-run-retargeted.glb`);
   const blend = useRef(0);
   const rig = useMemo(() => {
     const scene = clone(source);
@@ -29,7 +31,7 @@ function RiggedCitizen({ motion }: { motion: RefObject<Locomotion> }) {
     scene.position.y = -bounds.min.y;
     scene.traverse(object => {
       if (object instanceof THREE.Mesh) {
-        object.castShadow = true; object.receiveShadow = false;
+        object.castShadow = !mobile; object.receiveShadow = false;
         // A cached bind-pose sphere does not follow animated limbs at the
         // viewport edge. One moving character does not need frustum culling.
         object.frustumCulled = false;
@@ -39,8 +41,22 @@ function RiggedCitizen({ motion }: { motion: RefObject<Locomotion> }) {
       }
     });
     return { model, scene, scale, mixer, run, idle };
-  }, [source, animations]);
-  useEffect(() => { rig.run.play(); rig.idle.play(); return () => { rig.mixer.stopAllAction(); }; }, [rig]);
+  }, [source, animations, mobile]);
+  useEffect(() => {
+    rig.run.play(); rig.idle.play();
+    return () => {
+      // Retain bindings for React StrictMode's effect replay; the mixer is owned
+      // solely by this rig and is collected with it on an actual unmount.
+      rig.mixer.stopAllAction();
+      rig.scene.traverse(object => {
+        if (object instanceof THREE.Mesh) {
+          object.geometry.dispose();
+          for (const material of [object.material].flat()) material.dispose();
+          if (object instanceof THREE.SkinnedMesh) object.skeleton.dispose();
+        }
+      });
+    };
+  }, [rig]);
   useFrame((state, delta) => {
     const speed = motion.current.speed;
     const dt = Math.min(delta, 0.05);
@@ -61,6 +77,8 @@ function RiggedCitizen({ motion }: { motion: RefObject<Locomotion> }) {
 }
 
 export function AnimatedCitizen({ motion }: { motion: RefObject<Locomotion> }) {
-  const fallback = <MeshyAsset url="/models/tech-campus/guest.glb" height={HEIGHT} fallback={null} />;
+  const mobile = useMobileQuality();
+  // Do not fetch a second 9 MB character while the mobile rig is already loading.
+  const fallback = mobile ? null : <MeshyAsset url="/models/tech-campus/guest.glb" height={HEIGHT} fallback={null} />;
   return <AssetBoundary fallback={fallback}><Suspense fallback={fallback}><RiggedCitizen motion={motion} /></Suspense></AssetBoundary>;
 }

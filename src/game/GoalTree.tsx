@@ -6,6 +6,7 @@ import { Html, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
 import { DetailedTree } from "./CityDetails";
 import { useGame } from "./store";
+import { useMobileQuality } from "./RenderQuality";
 
 function glowTexture() {
   const canvas = document.createElement("canvas");
@@ -24,6 +25,7 @@ function glowTexture() {
 
 /** The company landmark behind Taiju; its footprint matches the existing collider. */
 export function GoalTree() {
+  const mobile = useMobileQuality();
   const showLabel = useGame(s => s.started && !s.dialogue);
   const glow = useMemo(glowTexture, []);
   const aura = useRef<THREE.SpriteMaterial>(null);
@@ -64,8 +66,8 @@ export function GoalTree() {
     <sprite position={[0, 6.5, 0]} scale={[11.5, 11.5, 1]}>
       <spriteMaterial ref={aura} map={glow} transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
     </sprite>
-    <Sparkles count={55} position={[0, 5.7, 0]} scale={[8, 9, 7]} size={5} speed={0.35} opacity={0.85} color="#ffe599" noise={[0.3, 0.6, 0.3]} />
-    <pointLight position={[0, 3, 1.4]} color="#ffca57" intensity={12} distance={9} decay={2} />
+    <Sparkles count={mobile ? 24 : 55} position={[0, 5.7, 0]} scale={[8, 9, 7]} size={5} speed={0.35} opacity={0.85} color="#ffe599" noise={[0.3, 0.6, 0.3]} />
+    {!mobile && <pointLight position={[0, 3, 1.4]} color="#ffca57" intensity={12} distance={9} decay={2} />}
     {showLabel && <Html center position={[0, 10.8, 0]} zIndexRange={[20, 0]} style={{ pointerEvents: "none" }}>
       <div style={{ whiteSpace: "nowrap", textAlign: "center", padding: "8px 16px", borderRadius: 6, border: "1px solid #ffe39b", background: "linear-gradient(135deg, #514020ed, #282b25ed)", boxShadow: "0 0 24px #efc45155", color: "#fff0b9" }}>
         <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.25em" }}>✦ GOAL ✦</div>
